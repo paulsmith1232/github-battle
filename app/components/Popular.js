@@ -2,7 +2,7 @@ import React from 'react'
 
 export default class Popular extends React.Component {
   render(){
-    const languages = ['All', 'JavaScript', 'Ruby', 'Java', 'CSS', 'Python']
+    const languages = ['All', 'JavaScript', 'Ruby', 'Java', 'CSS', 'Python', 'Remove this']
 
     return (
       <ul className='flex-center'>
