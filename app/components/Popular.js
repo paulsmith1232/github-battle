@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 function LanuagesNav ({ selected, onUpdateLanguage}){
   const languages = ['All', 'JavaScript', 'Ruby', 'Java', 'CSS', 'Python', 'Remove this']
@@ -17,6 +18,11 @@ function LanuagesNav ({ selected, onUpdateLanguage}){
       ))}
     </ul>
   )
+}
+
+LanguagesNav.propTypes = { // validates the input being passed into LanguagesNav
+  selected: PropTypes.string.isRequired,
+  onUpdateLanguage: PropTypes.func.isRequired
 }
 
 export default class Popular extends React.Component {
