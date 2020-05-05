@@ -1,5 +1,24 @@
 import React from 'react'
 
+function LanuagesNav ({ selected, onUpdateLanguage}){
+  const languages = ['All', 'JavaScript', 'Ruby', 'Java', 'CSS', 'Python', 'Remove this']
+
+  return (
+    <ul className='flex-center'>
+      {languages.map((language)=> (
+      <li key={language}>
+        <button 
+          className='btn-clear nav-link'
+          style = {language === selected ? {color: 'rgb(187, 46, 31)'} : null}
+          onClick={() => onUpdateLanguage(language)}>
+          {language}
+        </button>        
+      </li>
+      ))}
+    </ul>
+  )
+}
+
 export default class Popular extends React.Component {
   constructor(props) {
     super(props)
@@ -8,29 +27,24 @@ export default class Popular extends React.Component {
       selectedLanguage: 'All'
     }
 
-    this.updateLanguage = this.updateLanguage.bind(this)
+    this.updateLanguage = this.updateLanguage.bind(this) 
   }
   updateLanguage (selectedLanguage) {
-    this.setState({
+    this.setState({ //setstate called in order to trigger the re-render
       selectedLanguage
     })
   }
   render(){
-    const languages = ['All', 'JavaScript', 'Ruby', 'Java', 'CSS', 'Python', 'Remove this']
+    const { selectedLanguage} = this.state
 
     return (
-      <ul className='flex-center'>
-       {languages.map((language)=> (
-        <li key={language}>
-          <button 
-            className='btn-clear nav-link'
-            style = {language === this.state.selectedLanguage ? {color: 'rgb(187, 46, 31)'} : null}
-            onClick={()=>this.updateLanguage(language)}>
-            {language}
-          </button>        
-        </li>
-       ))}
-      </ul>
+      <React.Fragment>
+        <LanuagesNav
+        selected = {selectedLanguage}
+        onUpdateLanguage = {this.updateLanguage}
+        />
+
+      </React.Fragment>
     )
   }
 }
