@@ -2,20 +2,20 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { fetchPopularRepos } from '../utils/api'
 
-function LanguagesNav ({ selected, onUpdateLanguage}){
+function LanguagesNav({ selected, onUpdateLanguage }) {
   const languages = ['All', 'JavaScript', 'Ruby', 'Java', 'CSS', 'Python']
 
   return (
     <ul className='flex-center'>
-      {languages.map((language)=> (
-      <li key={language}>
-        <button 
-          className='btn-clear nav-link'
-          style = {language === selected ? {color: 'rgb(187, 46, 31)'} : null}
-          onClick={() => onUpdateLanguage(language)}>
-          {language}
-        </button>        
-      </li>
+      {languages.map((language) => (
+        <li key={language}>
+          <button
+            className='btn-clear nav-link'
+            style={language === selected ? { color: 'rgb(187, 46, 31)' } : null}
+            onClick={() => onUpdateLanguage(language)}>
+            {language}
+          </button>
+        </li>
       ))}
     </ul>
   )
@@ -32,54 +32,61 @@ export default class Popular extends React.Component {
 
     this.state = {
       selectedLanguage: 'All',
-      repos: null,
+      repos: {},
       error: null
     }
 
-    this.updateLanguage = this.updateLanguage.bind(this) 
-    this.isLoading = this.isLoading.bind(this) 
+    this.updateLanguage = this.updateLanguage.bind(this)
+    this.isLoading = this.isLoading.bind(this)
   }
-  componentDidMount () {
+  componentDidMount() {
     this.updateLanguage(this.state.selectedLanguage)
   }
-  updateLanguage (selectedLanguage) { // sets state of whatever selected language is and fetches the popularRepo
+  updateLanguage(selectedLanguage) { // sets state of whatever selected language is and fetches the popularRepo
     this.setState({ //setstate called in order to trigger the re-render
       selectedLanguage,
-      error: null,
-      repos: null
+      error: null
     })
 
-    fetchPopularRepos(selectedLanguage)
-      .then((repos) => this.setState({ // once resolved use the repos
-        repos,
-        error: null, 
-      }))
-      .catch(()=> {
-        console.warn('Error fetching repose: ', error)
-
-        this.setState({
-          error: `There was an error fetching the repositories.`
+    if (!this.state.repos[selectedLanguage]) {
+      fetchPopularRepos(selectedLanguage)
+        .then((data) => {
+          this.setState(({ repos }) => ({ // updates new repository based on current repos
+            repos: {
+              ...repos, // takes all properties and values of current repos state and merges with new object
+              [selectedLanguage]: data
+            }
+          }))
         })
-      })
+        .catch(() => {
+          console.warn('Error fetching repose: ', error)
+
+          this.setState({
+            error: `There was an error fetching the repositories.`
+          })
+        })
+    }
   }
   isLoading() {
-    return this.state.repos === null && this.state.error === null
-  }
-  render(){
     const { selectedLanguage, repos, error} = this.state
+
+    return !repos[selectedLanguage] && error === null
+  }
+  render() {
+    const { selectedLanguage, repos, error } = this.state
 
     return (
       <React.Fragment>
         <LanguagesNav
-        selected = {selectedLanguage}
-        onUpdateLanguage = {this.updateLanguage}
+          selected={selectedLanguage}
+          onUpdateLanguage={this.updateLanguage}
         />
 
         {this.isLoading() && <p>LOADING</p>}
 
         {error && <p>{error}</p>}
 
-        {repos && <pre>{JSON.stringify(repos, null, 2)}</pre>}
+        {repos[selectedLanguage] && <pre>{JSON.stringify(repos[selectedLanguage], null, 2)}</pre>}
       </React.Fragment>
     )
   }
